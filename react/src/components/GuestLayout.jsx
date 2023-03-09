@@ -1,10 +1,19 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material"
+import { useSelector } from 'react-redux'
+import { Navigate } from 'react-router-dom'
 
 const GuestLayout = () => {
    const theme = useTheme()
    const isNonMobileScreen = useMediaQuery("(min-width: 1000px)")
+
+   const token = useSelector(state => state.token)
+
+   if (token) {
+      return <Navigate to="/homepage" />
+   }
+
    return (
       <Box>
          <Box width="100%" backgroundColor={theme.palette.background.alt} p="1rem 6%" textAlign="center">

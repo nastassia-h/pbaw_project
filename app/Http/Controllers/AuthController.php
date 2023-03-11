@@ -28,14 +28,19 @@ class AuthController extends Controller
     public function signup(SignupRequest $request)
     {
         $data = $request->validated();
+
+        $imageName = time() . '.' . $request->image_path->extension();
+        $request->image_path->move(public_path('images'), $imageName);
+
         /** @var \App\Models\User $user */
         $user = User::create([
-            'name' => $data['first_name'],
-            //'first_name' => $data['first_name'],
-            //'last_name' => $data['last_name'],
-            //'occupation' => $data['occupation'],
-            // 'location' => $data['location'],
-            //'image_path' => $data['image_path'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'occupation' => $data['occupation'],
+            'location' => $data['location'],
+            'friend_list' => [],
+            'post_list' => [],
+            'image_path' => $imageName,
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);

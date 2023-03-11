@@ -29,6 +29,7 @@ class SignupRequest extends FormRequest
             'last_name' => 'required|string|max:55',
             'occupation' => 'string',
             'location' => 'string',
+            'image_path' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             'email' => 'required|email|unique:users,email',
             'password' => [
                 'required',

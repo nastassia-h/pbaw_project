@@ -43,7 +43,9 @@ const Signup = () => {
       for (let value in values) {
          formData.append(value, values[value])
       }
-      formData.append('image_path', values.picture.name)
+      formData.append('image_path', values.picture)
+
+      console.log(values)
 
       axiosClient.post('/signup', formData)
          .then(({ data }) => {
@@ -63,7 +65,7 @@ const Signup = () => {
             }
          })
 
-      onSubmitProps.resetForm()
+      // onSubmitProps.resetForm()
    }
 
    const handleFormSubmit = (values, onSubmitProps) => {

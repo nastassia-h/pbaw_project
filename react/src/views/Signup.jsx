@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Box, Button, TextField, useMediaQuery, Typography, useTheme, Link, Alert } from '@mui/material'
+import { Box, Button, TextField, useMediaQuery, Typography, useTheme, Link, Alert, Avatar, Stack } from '@mui/material'
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import Dropzone from 'react-dropzone'
 import FlexBetween from '../components/FlexBetween'
 import axiosClient from '../axios-client.js'
-import { setLogin } from '../store'
+import { setToken, setUser } from '../store'
 
 const registerSchema = yup.object().shape({
    first_name: yup.string().required("required"),
@@ -36,6 +36,21 @@ const Signup = () => {
    const dispatch = useDispatch()
    const isNonMobile = useMediaQuery("(min-width:600px)")
    const [errors, setErrors] = useState(null)
+   const [image, setImage] = useState({
+      imageFile: null,
+      imagePath: ""
+   })
+
+   const onImageChoose = (file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+         setImage({
+            imageFile: file,
+            imagePath: reader.result,
+         });
+      };
+      reader.readAsDataURL(file);
+   };
 
    const register = (values, onSubmitProps) => {
       setErrors(null)
@@ -43,19 +58,12 @@ const Signup = () => {
       for (let value in values) {
          formData.append(value, values[value])
       }
-      formData.append('image_path', values.picture)
-
-      console.log(values)
+      formData.append('image_path', image.imagePath)
 
       axiosClient.post('/signup', formData)
          .then(({ data }) => {
-            console.log(data)
-            dispatch(
-               setLogin({
-                  user: data.user,
-                  token: data.token
-               })
-            )
+            dispatch(setUser({ user: data.user }))
+            dispatch(setToken({ token: data.token }))
          })
          .catch(err => {
             const response = err.response;
@@ -147,24 +155,34 @@ const Signup = () => {
                         <Dropzone
                            acceptedFiles=".jpg,.jpeg,.png"
                            multiple={false}
-                           onDrop={acceptedFiles => setFieldValue("picture", acceptedFiles[0])}
+                           onDrop={acceptedFiles => { setFieldValue("picture", acceptedFiles[0]); onImageChoose(acceptedFiles[0]) }}
                         >
                            {({ getRootProps, getInputProps }) => (
                               <Box
                                  {...getRootProps()}
-                                 border={`2px dashed ${palette.primary.main}`}
-                                 p="1rem"
                                  sx={{ "&:hover": { cursor: "pointer" } }}
                               >
                                  <input {...getInputProps()} />
-                                 {!values.picture ? (
-                                    <p>Add picture Here</p>
-                                 ) : (
-                                    <FlexBetween>
-                                       <Typography>{values.picture.name}</Typography>
-                                       <EditOutlinedIcon />
-                                    </FlexBetween>
-                                 )}
+                                 <Box
+                                    display='flex'
+                                    justifyContent='space-between'
+                                    alignItems='center'
+                                 >
+                                    {!values.picture?.name ? (
+                                       <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+                                          <p><EditOutlinedIcon /></p>
+                                          <p>Add Picture Here</p>
+                                       </Stack>
+                                    ) : (
+                                       <Box display={'flex'} width={'100%'} justifyContent="space-between" alignItems="center">
+                                          <Avatar sx={{ width: 70, height: 70 }} src={image.imagePath} />
+                                          <Stack direction="row" spacing={2} justifyContent="center" alignItems="top">
+                                             <Typography>{values.picture.name}</Typography>
+                                             <p><EditOutlinedIcon /></p>
+                                          </Stack>
+                                       </Box>
+                                    )}
+                                 </Box>
                               </Box>
                            )}
                         </Dropzone>

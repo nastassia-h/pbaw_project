@@ -6,6 +6,7 @@ import Login from './views/Login'
 import Signup from './views/Signup'
 import Profile from './views/Profile'
 import NotFound from './views/NotFound'
+import UserForm from "./views/widgets/UserForm";
 
 
 const router = createBrowserRouter([
@@ -22,8 +23,12 @@ const router = createBrowserRouter([
             element: <HomePage />
          },
          {
-            path: '/homepage/:id',
+            path: '/profile/:id',
             element: <Profile />
+         },
+         {
+            path: '/homepage/edit',
+            element: <UserForm />
          }
       ]
    },

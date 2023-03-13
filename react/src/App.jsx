@@ -11,12 +11,10 @@ function App() {
   const mode = useSelector(state => state.mode)
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode])
   return (
-    <div>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RouterProvider router={router} />
+    </ThemeProvider>
   )
 }
 

@@ -14,13 +14,17 @@ export const authSlice = createSlice({
       setMode: (state) => {
          state.mode = state.mode === "light" ? "dark" : "light"
       },
-      setLogin: (state, action) => {
-         state.user = action.payload.user;
-         state.token = action.payload.token;
-      },
       setLogout: (state) => {
          state.user = null;
          state.token = null;
+         localStorage.removeItem('ACCESS_TOKEN')
+      },
+      setUser: (state, action) => {
+         state.user = action.payload.user;
+      },
+      setToken: (state, action) => {
+         state.token = action.payload.token;
+         localStorage.setItem('ACCESS_TOKEN', action.payload.token)
       },
       setFriends: (state, action) => {
          if (state.user) {
@@ -42,5 +46,5 @@ export const authSlice = createSlice({
    }
 })
 
-export const { setMode, setLogin, setLogout, setFriends, setPost, setPosts } = authSlice.actions
+export const { setMode, setToken, setLogout, setUser, setFriends, setPost, setPosts } = authSlice.actions
 export default authSlice.reducer

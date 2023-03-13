@@ -24,7 +24,6 @@ class User extends Authenticatable
         'location',
         'image_path',
         'friend_list',
-        'post_list',
         'email',
         'password',
     ];
@@ -36,7 +35,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -45,8 +43,6 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'friend_list' => 'array',
-        'post_list' => 'array',
     ];
 }

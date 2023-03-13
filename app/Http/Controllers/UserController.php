@@ -2,66 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\SignupRequest;
-use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
-class AuthController extends Controller
+class UserController extends Controller
 {
-    public function login(LoginRequest $request)
-    {
-        $credentials = $request->validated();
-        if (!Auth::attempt($credentials)) {
-            return response([
-                "message" => "Provided email or password is invalid"
-            ]);
-        }
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $token = $user->createToken('main')->plainTextToken;
 
-        return response(["user" => $user, "token" => $token]);
+    public function index(Request $request)
+    {
+        return $request->user();
     }
 
-    public function signup(SignupRequest $request)
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function show(User $user)
+    {
+        return new UserResource($user);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateUserRequest  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateUserRequest $request, User $user)
     {
         $data = $request->validated();
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
 
         if (isset($data['image_path'])) {
             $relativePath = $this->saveImage($data['image_path']);
             $data['image_path'] = $relativePath;
+
+            // If there is an old image, delete it
+            if ($user->image_path) {
+                $absolutePath = public_path($user->image_path);
+                File::delete($absolutePath);
+            }
         }
 
-        /** @var \App\Models\User $user */
-        $user = User::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'occupation' => $data['occupation'],
-            'location' => $data['location'],
-            'friend_list' => [],
-            'image_path' => $data['image_path'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
-
-        $token = $user->createToken('main')->plainTextToken;
-
-        return response(["user" => $user, "token" => $token]);
-        // return response(compact('user', 'token'));
+        $user->update($data);
+        return new UserResource($user);
     }
 
-    public function logout(Request $request)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(User $user)
     {
-        /** @var \App\Models\User $user */
-        $user = $request->user();
-        $user->currentAccessToken()->delete;
-
-        return response('', 204);
+        //
     }
 
     private function saveImage($image)

@@ -2,9 +2,8 @@ import { useState } from 'react'
 import { Box, Button, TextField, useMediaQuery, useTheme, Link, Alert } from '@mui/material'
 import { Formik } from 'formik'
 import * as yup from 'yup'
-import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { setLogin } from '../store/index.js'
+import { setUser, setToken } from '../store/index.js'
 import axiosClient from '../axios-client.js'
 
 const loginSchema = yup.object().shape({
@@ -28,12 +27,8 @@ const Login = () => {
       setErrors(null)
       axiosClient.post('/login', values)
          .then(({ data }) => {
-            dispatch(
-               setLogin({
-                  user: data.user,
-                  token: data.token
-               })
-            )
+            dispatch(setUser({ user: data.user }))
+            dispatch(setToken({ token: data.token }))
          })
          .catch(err => {
             const response = err.response;

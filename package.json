@@ -15,6 +15,7 @@
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
         "@mui/icons-material": "^5.11.11",
+        "@mui/joy": "^5.0.0-alpha.71",
         "@mui/material": "^5.11.12",
         "@reduxjs/toolkit": "^1.9.3",
         "@vitejs/plugin-react": "^3.1.0",

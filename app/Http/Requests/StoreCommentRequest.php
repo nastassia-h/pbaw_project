@@ -31,7 +31,9 @@ class StoreCommentRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'user_id' => 'exists:users,id',
+            'post_id' => 'exists:posts,id',
+            'comment' => 'required|string',
         ];
     }
 }

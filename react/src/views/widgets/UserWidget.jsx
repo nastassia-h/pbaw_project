@@ -8,32 +8,16 @@ import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
 import WidgetWrapper from "../../components/WidgetWrapper";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axiosClient from "../../axios-client";
-import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UserWidget = ({ userId, user }) => {
-   // const [user, setUser] = useState(null);
    const currentUser = useSelector(state => state.user)
    const { palette } = useTheme();
    const navigate = useNavigate();
    const dark = palette.primary.dark;
    const medium = palette.primary.medium;
    const main = palette.primary.main;
-
-   // const getUser = async () => {
-   //    axiosClient.get(`/user/${userId}`)
-   //       .then(({ data }) => {
-   //          setUser(data)
-   //       })
-   //       .catch(() => {
-   //       })
-   // };
-
-   // useEffect(() => {
-   //    getUser();
-   // }, []);
 
    if (!user) {
       return null;
@@ -74,7 +58,7 @@ const UserWidget = ({ userId, user }) => {
                   >
                      {first_name} {last_name}
                   </Typography>
-                  <Typography color={medium}>{friend_list.length} friends</Typography>
+                  <Typography color={medium}>{friend_list ? friend_list.length : 0} friends</Typography>
                </Box>
             </FlexBetween>
             {user.id === currentUser.id &&

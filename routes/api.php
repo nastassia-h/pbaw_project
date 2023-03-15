@@ -1,12 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
-use App\Http\Resources\PostResource;
-use App\Models\Post;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
    Route::post('/logout', [AuthController::class, 'logout']);
    Route::get('/posts/{id}', [PostController::class, 'userPosts']);
    Route::apiResource('user', UserController::class);
+   Route::patch('user/{id}/{friend_id}', [UserController::class, 'setFriend']);
    Route::apiResource('post', PostController::class);
+   Route::apiResource('comment', CommentController::class);
    Route::patch('post/{id}/like',  [PostController::class, 'like']);
 });
 

@@ -2,6 +2,7 @@ import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axiosClient from "../axios-client.js";
 import { setFriends } from "../store/index.js";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
@@ -18,21 +19,13 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
    const main = palette.primary.main;
    const medium = palette.primary.medium;
 
-   const isFriend = friends.find((friend) => friend.id === friendId);
+   const isFriend = friends?.includes(`${friendId}`);
 
    const patchFriend = async () => {
-      //  const response = await fetch(
-      //    `http://localhost:3001/users/${_id}/${friendId}`,
-      //    {
-      //      method: "PATCH",
-      //      headers: {
-      //        Authorization: `Bearer ${token}`,
-      //        "Content-Type": "application/json",
-      //      },
-      //    }
-      //  );
-      //  const data = await response.json();
-      //  dispatch(setFriends({ friends: data }));
+      axiosClient.patch(`/user/${id}/${friendId}`)
+         .then(({ data }) => {
+            dispatch(setFriends({ friends: data }))
+         })
    };
 
    return (
@@ -65,7 +58,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
          </FlexBetween>
          {id !== friendId &&
             <IconButton
-               //onClick={() => patchFriend()}
+               onClick={() => patchFriend()}
                sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
             >
                {isFriend ? (

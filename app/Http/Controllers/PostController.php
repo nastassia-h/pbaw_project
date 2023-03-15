@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
 use App\Http\Requests\LikePostRequest;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\File;

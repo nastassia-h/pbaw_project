@@ -58,6 +58,29 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    public function setFriend(Request $request)
+    {
+        $user = $request->user();
+        $friend_id = $request->friend_id;
+
+        $friend = new UserResource(User::findOrFail($friend_id));
+
+        $user_friend_list = $user->friend_list;
+        $friend_list = $friend->friend_list;
+
+        if (is_array($user_friend_list) && in_array($friend_id, $user_friend_list)) {
+            unset($user_friend_list[array_search($friend_id, $user_friend_list)]);
+            unset($friend_list[array_search($user->id, $friend_list)]);
+        } else {
+            $user_friend_list[] = $friend_id;
+            $friend_list[] = $user->id;
+        }
+
+        $user->update(['friend_list' => $user_friend_list]);
+        $friend->update(['friend_list' => $friend_list]);
+        return $user->friend_list;
+    }
+
     /**
      * Remove the specified resource from storage.
      *

@@ -5,14 +5,15 @@ import {
    ShareOutlined,
    DeleteOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme, Dialog, DialogTitle, Button } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, Dialog, DialogTitle, Button, FormControl, FormLabel, Input } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../store/index.js";
 import axiosClient from "../../axios-client.js"
+import CommentWidget from "./CommentWidget";
 
 const PostWidget = ({
    postId,
@@ -27,23 +28,46 @@ const PostWidget = ({
    onDeleteClick
 }) => {
    const [isComments, setIsComments] = useState(false);
+   const commentRef = useRef()
    const dispatch = useDispatch();
    const loggedInUserId = useSelector((state) => state.user.id);
    const isLiked = Boolean(likes.includes(loggedInUserId));
    const likeCount = Object.keys(likes).length;
    const [open, setOpen] = useState(false);
+   const [postComments, setPostComments] = useState([...comments])
 
    const { palette } = useTheme();
    const main = palette.primary.main;
    const primary = palette.primary.main;
 
-   const patchLike = async () => {
+   const patchLike = () => {
       axiosClient.patch(`/post/${postId}/like`)
          .then(({ data }) => {
             dispatch(setPost({ post: data }));
          })
          .catch(() => { })
    };
+
+   const onCommentDelete = (commentId) => {
+      axiosClient.delete(`/comment/${commentId}`).then(() => {
+         setPostComments(postComments.filter(comment => comment.id !== commentId))
+      });
+   }
+
+   const sendComment = () => {
+
+      const formData = new FormData()
+
+      formData.append('post_id', postId)
+      formData.append('comment', commentRef.current.value)
+
+      axiosClient.post(`/comment`, formData)
+         .then(({ data }) => {
+            setPostComments([data, ...postComments])
+            commentRef.current.value = ""
+         })
+         .catch(() => { })
+   }
 
    const handleClickOpen = () => {
       setOpen(true);
@@ -110,7 +134,7 @@ const PostWidget = ({
                   <IconButton onClick={() => setIsComments(!isComments)}>
                      <ChatBubbleOutlineOutlined />
                   </IconButton>
-                  <Typography>{comments.length}</Typography>
+                  <Typography>{postComments.length}</Typography>
                </FlexBetween>
             </FlexBetween>
 
@@ -118,19 +142,23 @@ const PostWidget = ({
                <ShareOutlined />
             </IconButton>
          </FlexBetween>
-         {/* {isComments && (
-            <Box mt="0.5rem">
-               {comments.map((comment, i) => (
-                  <Box key={`${name}-${i}`}>
-                     <Divider />
-                     <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                        {comment}
-                     </Typography>
+         {isComments && (
+            <Box mt="0.5rem" mb="1rem">
+               <FormControl fullWidth>
+                  <FormLabel style={{ marginBottom: "0.5rem" }}>Your comment</FormLabel>
+                  <Box display='grid' gap="1rem">
+                     <Input
+                        inputRef={commentRef}
+                        placeholder="Type something here…"
+                     />
+                     <Button onClick={sendComment} style={{ width: "3rem", justifySelf: "end" }} variant='outlined' color='primary'>Send</Button>
                   </Box>
+               </FormControl>
+               {postComments.map((comment, i) => (
+                  <CommentWidget onCommentDelete={onCommentDelete} postComment={comment} key={i} />
                ))}
-               <Divider />
             </Box>
-         )} */}
+         )}
       </WidgetWrapper>
    );
 };

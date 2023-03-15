@@ -24,7 +24,7 @@ const AdvertWidget = () => {
             width="100%"
             height="auto"
             alt="advert"
-            src={'http://localhost:8000/images/adver.jpg'}
+            src={'http://localhost:3000/src/assets/photo.jpg'}
             style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
          />
          <Box >

@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../axios-client.js";
@@ -7,7 +9,14 @@ import { setFriends } from "../store/index.js";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Friend = ({ friendId, name, subtitle, userPicturePath, fetch = false }) => {
+
+   const [user, setUser] = useState({
+      name: name,
+      subtitle: subtitle,
+      userPicturePath: userPicturePath,
+   })
+
    const dispatch = useDispatch();
    const navigate = useNavigate();
    const { id } = useSelector((state) => state.user);
@@ -21,6 +30,19 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
 
    const isFriend = friends?.includes(`${friendId}`);
 
+   const getUser = async () => {
+      axiosClient.get(`/user/${friendId}`)
+         .then(({ data }) => {
+            setUser({
+               name: `${data.first_name} ${data.last_name}`,
+               subtitle: data.location,
+               userPicturePath: data.image_path
+            })
+         })
+         .catch(() => {
+         })
+   };
+
    const patchFriend = async () => {
       axiosClient.patch(`/user/${id}/${friendId}`)
          .then(({ data }) => {
@@ -28,10 +50,27 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
          })
    };
 
+   useEffect(() => {
+      if (fetch) {
+         getUser(friendId);
+      }
+   }, [])
+
+   if (!user.name) return (
+      <Box
+         width="100%"
+         textAlign="center"
+      >
+         <Typography
+            fontSize="14px"
+         >Loading...</Typography>
+      </Box>
+   )
+
    return (
       <FlexBetween>
          <FlexBetween gap="1rem">
-            <UserImage image={userPicturePath} size="55px" />
+            <UserImage image={user.userPicturePath} size="55px" />
             <Box
                onClick={() => {
                   navigate(`/profile/${friendId}`);
@@ -49,10 +88,10 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
                      },
                   }}
                >
-                  {name}
+                  {user.name}
                </Typography>
                <Typography color={medium} fontSize="0.75rem">
-                  {subtitle}
+                  {user.subtitle}
                </Typography>
             </Box>
          </FlexBetween>

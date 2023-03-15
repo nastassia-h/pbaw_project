@@ -96,14 +96,14 @@ const UserWidget = ({ userId, user }) => {
                <Typography color={medium}>Who's viewed profile</Typography>
                <Typography color={main} fontWeight="500">
                   {/* {viewedProfile} */}
-                  238676
+                  3864
                </Typography>
             </FlexBetween>
             <FlexBetween>
                <Typography color={medium}>Impressions of posts</Typography>
                <Typography color={main} fontWeight="500">
                   {/* {impressions} */}
-                  2546
+                  127
                </Typography>
             </FlexBetween>
          </Box>

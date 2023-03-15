@@ -8,6 +8,7 @@ use App\Models\User;
 
 class PostResource extends JsonResource
 {
+    public static $wrap = false;
     /**
      * Transform the resource into an array.
      *

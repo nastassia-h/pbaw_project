@@ -23,11 +23,15 @@ import UserImage from "../../components/UserImage";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useState } from "react";
 import axiosClient from '../../axios-client.js'
+import { useDispatch, useSelector } from "react-redux";
+import { setPosts } from "../../store";
 
 const MyPostWidget = ({ picturePath }) => {
    const [isImage, setIsImage] = useState(false);
    const [image, setImage] = useState({ imageFile: null, imagePath: "" });
    const [post, setPost] = useState("");
+   const posts = useSelector(state => state.posts)
+   const dispatch = useDispatch()
    const { palette } = useTheme();
    const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
    const mediumMain = palette.primary.mediumMain;
@@ -47,11 +51,16 @@ const MyPostWidget = ({ picturePath }) => {
    const handlePost = async () => {
       const formData = new FormData();
       formData.append("description", post);
-      if (image.imagePath) {
+      if (image?.imagePath) {
          formData.append("image_path", image.imagePath);
       }
 
       axiosClient.post('/post', formData)
+         .then(({ data }) => {
+            dispatch(setPosts({
+               posts: [data, ...posts]
+            }))
+         })
       setPost("")
       setImage(null)
       setIsImage(false)

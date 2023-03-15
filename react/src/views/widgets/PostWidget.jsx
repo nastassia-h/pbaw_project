@@ -3,14 +3,16 @@ import {
    FavoriteBorderOutlined,
    FavoriteOutlined,
    ShareOutlined,
+   DeleteOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, Dialog, DialogTitle, Button } from "@mui/material";
 import FlexBetween from "../../components/FlexBetween";
 import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../store/index.js";
+import axiosClient from "../../axios-client.js"
 
 const PostWidget = ({
    postId,
@@ -22,38 +24,63 @@ const PostWidget = ({
    userPicturePath,
    likes,
    comments,
+   onDeleteClick
 }) => {
    const [isComments, setIsComments] = useState(false);
    const dispatch = useDispatch();
-   const loggedInUserId = useSelector((state) => state.user._id);
-   const isLiked = Boolean(likes[loggedInUserId]);
+   const loggedInUserId = useSelector((state) => state.user.id);
+   const isLiked = Boolean(likes.includes(loggedInUserId));
    const likeCount = Object.keys(likes).length;
+   const [open, setOpen] = useState(false);
 
    const { palette } = useTheme();
    const main = palette.primary.main;
    const primary = palette.primary.main;
 
    const patchLike = async () => {
-      // const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
-      //    method: "PATCH",
-      //    headers: {
-      //       Authorization: `Bearer ${token}`,
-      //       "Content-Type": "application/json",
-      //    },
-      //    body: JSON.stringify({ userId: loggedInUserId }),
-      // });
-      // const updatedPost = await response.json();
-      // dispatch(setPost({ post: updatedPost }));
+      axiosClient.patch(`/post/${postId}/like`)
+         .then(({ data }) => {
+            dispatch(setPost({ post: data }));
+         })
+         .catch(() => { })
    };
+
+   const handleClickOpen = () => {
+      setOpen(true);
+   };
+
+   const handleClose = () => {
+      setOpen(false);
+   };
+
 
    return (
       <WidgetWrapper mb="1rem">
-         <Friend
-            friendId={postUserId}
-            name={name}
-            subtitle={location}
-            userPicturePath={userPicturePath}
-         />
+         <Dialog
+            onClose={handleClose}
+            open={open}>
+            <DialogTitle>Are you sure you want to delete?</DialogTitle>
+            <Box display='flex' justifyContent='space-between' p="1rem">
+               <Button variant="text" color="primary" onClick={handleClose}>Cancel</Button>
+               <Button variant="outlined" color="error" onClick={() => { handleClose(); onDeleteClick(postId) }}>Delete</Button>
+            </Box>
+         </Dialog>
+         <Box display={loggedInUserId === postUserId ? 'flex' : ''} justifyContent='space-between' alignItems='center'>
+            <Friend
+               friendId={postUserId}
+               name={name}
+               subtitle={location}
+               userPicturePath={userPicturePath}
+            />
+            {loggedInUserId === postUserId &&
+               <IconButton
+                  onClick={handleClickOpen}
+                  sx={{ width: "30", marginLeft: '10px' }}
+               >
+                  <DeleteOutlined color={'error'} />
+               </IconButton>
+            }
+         </Box>
          <Typography color={main} sx={{ mt: "1rem" }}>
             {description}
          </Typography>
@@ -62,7 +89,7 @@ const PostWidget = ({
                width="100%"
                height="auto"
                alt="post"
-               style={{ maxHeight: "500px", borderRadius: "0.75rem", marginTop: "0.75rem" }}
+               style={{ maxHeight: "600px", borderRadius: "0.75rem", marginTop: "0.75rem" }}
                src={picturePath}
             />
          )}

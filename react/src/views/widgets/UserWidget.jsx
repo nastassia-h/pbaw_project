@@ -13,8 +13,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../../axios-client";
 import { useSelector, useDispatch } from "react-redux";
 
-const UserWidget = ({ userId, picturePath }) => {
-   const [user, setUser] = useState(null);
+const UserWidget = ({ userId, user }) => {
+   // const [user, setUser] = useState(null);
    const currentUser = useSelector(state => state.user)
    const { palette } = useTheme();
    const navigate = useNavigate();
@@ -22,18 +22,18 @@ const UserWidget = ({ userId, picturePath }) => {
    const medium = palette.primary.medium;
    const main = palette.primary.main;
 
-   const getUser = async () => {
-      axiosClient.get(`/user/${userId}`)
-         .then(({ data }) => {
-            setUser(data)
-         })
-         .catch(() => {
-         })
-   };
+   // const getUser = async () => {
+   //    axiosClient.get(`/user/${userId}`)
+   //       .then(({ data }) => {
+   //          setUser(data)
+   //       })
+   //       .catch(() => {
+   //       })
+   // };
 
-   useEffect(() => {
-      getUser();
-   }, []);
+   // useEffect(() => {
+   //    getUser();
+   // }, []);
 
    if (!user) {
       return null;
@@ -44,7 +44,7 @@ const UserWidget = ({ userId, picturePath }) => {
       last_name,
       location,
       occupation,
-      //image_path,
+      image_path,
       //viewedProfile,
       //impressions,
       friend_list,
@@ -58,7 +58,7 @@ const UserWidget = ({ userId, picturePath }) => {
             pb="1.1rem"
          >
             <FlexBetween gap="1rem">
-               <UserImage image={picturePath} />
+               <UserImage image={image_path} />
                <Box>
                   <Typography
                      variant="h4"

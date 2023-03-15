@@ -8,7 +8,7 @@ import FriendsListWidget from './widgets/FriendsListWidget'
 
 const HomePage = () => {
    const isNonMobileScreen = useMediaQuery("(min-width:1000px)")
-   const { id, image_path } = useSelector(state => state.user)
+   const user = useSelector(state => state.user)
    return (
       <Box
          width="100%"
@@ -18,18 +18,18 @@ const HomePage = () => {
          justifyContent="space-between"
       >
          <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
-            <UserWidget userId={id} picturePath={image_path} />
+            <UserWidget userId={user.id} user={user} />
          </Box>
          <Box display={'grid'} gap={'2rem'} flexBasis={isNonMobileScreen ? "42%" : undefined}
             mt={isNonMobileScreen ? undefined : "2rem"}
          >
-            <MyPostWidget picturePath={image_path} />
-            <PostsWidget userId={id} />
+            <MyPostWidget picturePath={user.image_path} />
+            <PostsWidget userId={user.id} />
          </Box>
          {isNonMobileScreen && (
             <Box flexBasis="26%">
                {/* <AdvertWidget /> */}
-               <Box m="2rem 0"><FriendsListWidget userId={id} /></Box>
+               <Box m="2rem 0"><FriendsListWidget userId={user.id} /></Box>
             </Box>
          )}
       </Box>

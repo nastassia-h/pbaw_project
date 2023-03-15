@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -27,7 +27,18 @@ const ProfilePage = () => {
       getUser();
    }, []);
 
-   if (!user) return <div>Loading...</div>;
+   if (!user) return (
+      <Box
+         width="100%"
+         textAlign="center"
+      >
+         <Typography
+            fontWeight="bold"
+            fontSize="32px"
+            color="primary"
+         >Loading...</Typography>
+      </Box>
+   );
 
    return (
       <Box
@@ -38,7 +49,7 @@ const ProfilePage = () => {
          justifyContent="center"
       >
          <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-            <UserWidget userId={user.id} picturePath={user.image_path} />
+            <UserWidget userId={user.id} user={user} />
             <Box m="2rem 0" />
             <FriendListWidget userId={user.id} />
          </Box>

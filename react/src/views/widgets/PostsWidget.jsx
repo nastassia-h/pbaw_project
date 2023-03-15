@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../store/index.js";
 import PostWidget from "./PostWidget";
@@ -7,28 +8,42 @@ import axiosClient from "../../axios-client.js";
 const PostsWidget = ({ userId, isProfile = false }) => {
    const dispatch = useDispatch();
    const posts = useSelector((state) => state.posts);
+   const [loading, setLoading] = useState(false)
 
    const getPosts = async () => {
-      axiosClient.get(`/post`)
+      setLoading(true)
+      axiosClient.get(isProfile ? `/posts/${userId}` : `/post`)
          .then(({ data }) => {
             dispatch(setPosts({ posts: data.data }))
+            setLoading(false)
+         })
+         .catch(() => {
+            setLoading(false)
          })
    };
 
-   const getUserPosts = async () => {
-      axiosClient.get(`/posts/${userId}`)
-         .then(({ data }) => {
-            dispatch(setPosts({ posts: data.data }))
-         })
-   };
+   const onDeleteClick = (postId) => {
+      axiosClient.delete(`/post/${postId}`).then(() => {
+         getPosts()
+      });
+   }
 
    useEffect(() => {
-      if (isProfile) {
-         getUserPosts();
-      } else {
-         getPosts();
-      }
+      getPosts();
    }, []);
+
+   if (loading) return (
+      <Box
+         width="100%"
+         textAlign="center"
+      >
+         <Typography
+            fontWeight="bold"
+            fontSize="18px"
+            color="primary"
+         >Loading...</Typography>
+      </Box>
+   )
 
    return (
       <>
@@ -53,6 +68,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
                   userPicturePath={user.image_path}
                   likes={likes}
                   comments={comments}
+                  onDeleteClick={onDeleteClick}
                />
             )
          )}

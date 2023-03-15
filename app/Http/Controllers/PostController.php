@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\LikePostRequest;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -80,9 +81,40 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(LikePostRequest $request, Post $post)
     {
-        //
+        $user_id = $request->user()->id;
+
+        $likes = $post->likes;
+
+
+        if (is_array($likes) && in_array($user_id, $likes)) {
+            unset($likes[array_search($user_id, $likes)]);
+        } else {
+            $likes[] = $user_id;
+        }
+
+        $post->update(['likes' => $likes]);
+
+        return new PostResource($post);
+    }
+
+    public function like(LikePostRequest $request, Post $post)
+    {
+        $user_id = $request->user()->id;
+
+        $post = new PostResource(Post::findOrFail($request->id));
+
+        $likes = $post->likes;
+
+        if (is_array($likes) && in_array($user_id, $likes)) {
+            unset($likes[array_search($user_id, $likes)]);
+        } else {
+            $likes[] = $user_id;
+        }
+
+        $post->update(['likes' => $likes]);
+        return new PostResource($post);
     }
 
     /**

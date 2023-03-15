@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
    Route::get('/posts/{id}', [PostController::class, 'userPosts']);
    Route::apiResource('user', UserController::class);
    Route::apiResource('post', PostController::class);
+   Route::patch('post/{id}/like',  [PostController::class, 'like']);
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);

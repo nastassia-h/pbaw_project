@@ -95,7 +95,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, fetch = false }) =>
                </Typography>
             </Box>
          </FlexBetween>
-         {id !== friendId &&
+         {id != friendId &&
             <IconButton
                onClick={() => patchFriend()}
                sx={{ backgroundColor: primaryLight, p: "0.6rem" }}

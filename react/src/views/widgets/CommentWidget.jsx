@@ -1,4 +1,4 @@
-import { Typography, Box, IconButton, useTheme } from '@mui/material'
+import { Typography, Box, IconButton, useTheme, Link } from '@mui/material'
 import {
    FavoriteBorderOutlined,
    FavoriteOutlined,
@@ -47,7 +47,7 @@ const CommentWidget = ({ postComment, onCommentDelete }) => {
          .then(({ data }) => {
             setUser(data)
          })
-   }, [])
+   }, [postComment])
 
    if (!user) return null;
 
@@ -58,7 +58,7 @@ const CommentWidget = ({ postComment, onCommentDelete }) => {
                <UserImage size='15' image={user?.image_path} />
             </Box>
             <Box flex='1 1 auto' sx={{ backgroundColor: mode === "dark" ? 'darkgrey' : '#c7edfe' }} p="0.5rem" borderRadius="10px">
-               <Typography fontSize='10px'>{`${user?.first_name} ${user?.last_name}`}</Typography>
+               <Link fontSize='10px' color='#fff' style={{ textDecoration: 'none' }} href={`/profile/${user_id}`}>{`${user?.first_name} ${user?.last_name}`}</Link>
                <Typography fontSize='12px'>{comment}</Typography>
             </Box>
          </Box>

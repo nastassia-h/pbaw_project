@@ -11,7 +11,7 @@ import Friend from "../../components/Friend";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "../../store/index.js";
+import { setPost, setComment } from "../../store/index.js";
 import axiosClient from "../../axios-client.js"
 import CommentWidget from "./CommentWidget";
 
@@ -36,6 +36,9 @@ const PostWidget = ({
    const [open, setOpen] = useState(false);
    const [postComments, setPostComments] = useState([...comments])
 
+   const posts = useSelector(state => state.posts)
+   const currentPost = posts.filter(post => post.id === postId);
+
    const { palette } = useTheme();
    const main = palette.primary.main;
    const primary = palette.primary.main;
@@ -51,6 +54,7 @@ const PostWidget = ({
    const onCommentDelete = (commentId) => {
       axiosClient.delete(`/comment/${commentId}`).then(() => {
          setPostComments(postComments.filter(comment => comment.id !== commentId))
+         // dispatch(setComment({ comment: { post_id: postId, postComments } }));
       });
    }
 
@@ -63,7 +67,8 @@ const PostWidget = ({
 
       axiosClient.post(`/comment`, formData)
          .then(({ data }) => {
-            setPostComments([data, ...postComments])
+            setPostComments([...postComments, data])
+            dispatch(setComment({ comment: data }));
             commentRef.current.value = ""
          })
          .catch(() => { })
@@ -154,9 +159,9 @@ const PostWidget = ({
                      <Button onClick={sendComment} style={{ width: "3rem", justifySelf: "end" }} variant='outlined' color='primary'>Send</Button>
                   </Box>
                </FormControl>
-               {postComments.map((comment, i) => (
+               {postComments.map((comment, i) =>
                   <CommentWidget onCommentDelete={onCommentDelete} postComment={comment} key={i} />
-               ))}
+               )}
             </Box>
          )}
       </WidgetWrapper>

@@ -4,18 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\SearchUserResource;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
 
     public function index(Request $request)
     {
-        return $request->user();
+        $user_first_name = $request->user_first_name;
+        $user_last_name = $request->user_last_name;
+
+        $users = DB::table('users')
+            ->where([
+                ['first_name', 'like', "$user_first_name%"],
+                ['last_name', 'like', "$user_last_name%"],
+            ])
+            ->orWhere([
+                ['first_name', 'like', "$user_last_name%"],
+                ['last_name', 'like', "$user_first_name%"],
+            ])
+            ->get(['id', 'first_name', 'last_name', 'image_path']);
+        return $users;
     }
 
     /**

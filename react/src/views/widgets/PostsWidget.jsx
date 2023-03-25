@@ -45,6 +45,19 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       </Box>
    )
 
+   if (posts.length == 0) return (
+      <Box
+         width="100%"
+         textAlign="center"
+      >
+         <Typography
+            fontWeight="bold"
+            fontSize="18px"
+            color="primary"
+         >Posts haven't been created yet...</Typography>
+      </Box>
+   )
+
    return (
       <>
          {posts.map(

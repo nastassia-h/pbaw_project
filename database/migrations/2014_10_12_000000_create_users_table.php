@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('occupation');
             $table->string('location');
-            $table->string('image_path');
+            $table->string('image_path')->nullable(true);
             $table->string('email')->unique();
             $table->json('friend_list');
             $table->string('password');

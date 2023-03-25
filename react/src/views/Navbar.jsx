@@ -1,12 +1,13 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { Box, IconButton, InputBase, Typography, Select, FormControl, MenuItem, useTheme, useMediaQuery } from '@mui/material'
-import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from "@mui/icons-material"
+import { Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from "@mui/icons-material"
 import { useDispatch, useSelector } from 'react-redux'
 import { setMode, setLogout } from "../store/index.js"
 import { useNavigate } from 'react-router-dom'
 import axiosClient from '../axios-client.js'
 import FlexBetween from '../components/FlexBetween'
+import UsersSearch from '../components/Search.jsx'
 import { setUser } from '../store/index.js'
 
 const Navbar = () => {
@@ -33,7 +34,7 @@ const Navbar = () => {
    }
 
    useEffect(() => {
-      axiosClient.get('/user')
+      axiosClient.get(`/user/${user.id}`)
          .then(({ data }) => {
             dispatch(
                setUser({ user: data })
@@ -43,7 +44,7 @@ const Navbar = () => {
 
    return (
       <FlexBetween padding="1rem 6%" backgroundColor={alt}>
-         <FlexBetween gap="1.75rem">
+         <FlexBetween gap="1.75rem" >
             <Typography
                fontWeight="bold"
                fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -59,12 +60,8 @@ const Navbar = () => {
                Peoplebook
             </Typography>
             {isNonMobileScreens && (
-               <FlexBetween border={`2px solid ${primaryLight}`} borderRadius="9px" gap="3rem" padding="0.1rem 1.5rem">
-                  <InputBase sx={{ color: mode === 'dark' ? 'white' : 'black' }} placeholder='Search...'>
-                     <IconButton>
-                        <Search />
-                     </IconButton>
-                  </InputBase>
+               <FlexBetween position='relative' border={`2px solid ${primaryLight}`} borderRadius="9px" gap="3rem" padding="0.1rem 1.5rem">
+                  <UsersSearch />
                </FlexBetween>
             )}
          </FlexBetween>

@@ -35,9 +35,7 @@ const UserWidget = ({ userId, user }) => {
    } = user;
 
    return (
-      <WidgetWrapper 
-         position="sticky"
-         top="1rem">
+      <WidgetWrapper>
          {/* FIRST ROW */}
          <FlexBetween
             gap="0.5rem"

@@ -118,7 +118,7 @@ const PostWidget = ({
                width="100%"
                height="auto"
                alt="post"
-               style={{ maxHeight: "600px", borderRadius: "0.75rem", marginTop: "0.75rem" }}
+               style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
                src={picturePath}
             />
          )}

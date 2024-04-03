@@ -18,7 +18,12 @@ const HomePage = () => {
          justifyContent="space-between"
       >
          <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
-            <UserWidget userId={user.id} user={user} />
+            <Box
+               position={isNonMobileScreen ? "sticky" : undefined}
+               top={isNonMobileScreen ? "1rem" : undefined}
+            >
+               <UserWidget userId={user.id} user={user} />
+            </Box>
          </Box>
          <Box display={'grid'} gap={'2rem'} flexBasis={isNonMobileScreen ? "42%" : undefined}
             mt={isNonMobileScreen ? undefined : "2rem"}

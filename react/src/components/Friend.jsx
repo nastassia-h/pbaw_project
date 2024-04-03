@@ -28,7 +28,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, fetch = false }) =>
    const main = palette.primary.main;
    const medium = palette.primary.medium;
 
-   const isFriend = friends?.includes(`${friendId}`);
+   const isFriend = friends?.includes(friendId);
 
    const getUser = async () => {
       axiosClient.get(`/user/${friendId}`)

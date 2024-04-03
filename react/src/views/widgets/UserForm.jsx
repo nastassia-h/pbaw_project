@@ -48,13 +48,13 @@ const UserForm = () => {
       reader.readAsDataURL(file);
    };
 
-   const update = () => {
+   const update = (values, onSubmitProps) => {
       setErrors(null)
-      const payload = { ...updatedUser }
+      const payload = { ...values }
 
-      if (payload.image) {
+      if (updatedUser.image) {
          delete payload.image;
-         payload.image_path = payload.image_url;
+         payload.image_path = updatedUser.image_url;
          delete payload.image_url;
       } else {
          delete payload.image_path
@@ -80,11 +80,15 @@ const UserForm = () => {
          })
    }
 
+   const handleFormSubmit = (values, onSubmitProps) => {
+      update(values, onSubmitProps)
+   }
+
    return (
       <Box width={isNonMobileScreen ? "50%" : "95%"} p="1rem" m="1.5rem auto" borderRadius="1.5rem" textAlign={'center'}>
          <>
             <Formik
-               onSubmit={update}
+               onSubmit={handleFormSubmit}
                initialValues={updatedUser}
                validationSchema={registerSchema}
             >

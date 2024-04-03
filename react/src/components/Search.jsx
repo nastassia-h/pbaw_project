@@ -36,13 +36,13 @@ const UsersSearch = () => {
 
    return (
       <>
-         <InputBase onFocus={() => setIsOptionsShown(true)} onBlur={handleBlur} zIndex={20} value={searchUser} onChange={(e) => setSearchUser(e.target.value)} sx={{ color: mode === 'dark' ? 'white' : 'black' }} placeholder='Search...'>
+         <InputBase onFocus={() => setIsOptionsShown(true)} onBlur={handleBlur} zindex={20} value={searchUser} onChange={(e) => setSearchUser(e.target.value)} sx={{ color: mode === 'dark' ? 'white' : 'black' }} placeholder='Search...'>
             <IconButton>
                <Search />
             </IconButton>
          </InputBase>
          {isOptionsShown &&
-            <Box position='absolute' top='99%' left={0} width='100%' zIndex={10}
+            <Box position='absolute' top='99%' left={0} width='100%' zindex={10}
                sx={{
                   backgroundColor: '#42a5f5',
                   maxHeight: '400px',

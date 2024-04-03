@@ -81,18 +81,18 @@ class UserController extends Controller
         $friend = new UserResource(User::findOrFail($friend_id));
 
         $user_friend_list = $user->friend_list;
-        $friend_list = $friend->friend_list;
+        $friend_friend_list = $friend->friend_list;
 
         if (is_array($user_friend_list) && in_array($friend_id, $user_friend_list)) {
-            unset($user_friend_list[array_search($friend_id, $user_friend_list)]);
-            unset($friend_list[array_search($user->id, $friend_list)]);
+            unset($user_friend_list[array_search((int)$friend_id, $user_friend_list)]);
+            unset($friend_friend_list[array_search($user->id, $friend_friend_list)]);
         } else {
-            $user_friend_list[] = $friend_id;
-            $friend_list[] = $user->id;
+            $user_friend_list[] = (int)$friend_id;
+            $friend_friend_list[] = $user->id;
         }
 
         $user->update(['friend_list' => $user_friend_list]);
-        $friend->update(['friend_list' => $friend_list]);
+        $friend->update(['friend_list' => $friend_friend_list]);
         return $user->friend_list;
     }
 

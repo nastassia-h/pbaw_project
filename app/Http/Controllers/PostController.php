@@ -67,10 +67,7 @@ class PostController extends Controller
      */
     public function show(Post $post, Request $request)
     {
-        return  $request->user_id;
-        // return PostResource::collection(
-        //     Post::where('user_id', $request->id)->orderBy('id', 'desc')->paginate(10)
-        // );
+        return new PostResource($post);
     }
 
     /**
@@ -140,6 +137,7 @@ class PostController extends Controller
 
         return response('', 204);
     }
+
     private function saveImage($image)
     {
         // Check if image is valid base64 string

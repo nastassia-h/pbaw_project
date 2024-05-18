@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../store/index.js";
 import PostWidget from "./PostWidget";
@@ -37,11 +37,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
          width="100%"
          textAlign="center"
       >
-         <Typography
-            fontWeight="bold"
-            fontSize="18px"
-            color="primary"
-         >Loading...</Typography>
+         <CircularProgress/>
       </Box>
    )
 

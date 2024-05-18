@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, CircularProgress, Typography, useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -32,11 +32,7 @@ const ProfilePage = () => {
          width="100%"
          textAlign="center"
       >
-         <Typography
-            fontWeight="bold"
-            fontSize="32px"
-            color="primary"
-         >Loading...</Typography>
+         <CircularProgress/>
       </Box>
    );
 

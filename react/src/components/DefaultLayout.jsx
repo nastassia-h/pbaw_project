@@ -8,8 +8,9 @@ import { useEffect } from 'react'
 const DefaultLayout = () => {
 
    const token = useSelector(state => state.token)
+   const roles = useSelector(state => state.roles)
 
-   if (!token) {
+   if (!token || !roles.includes('user')) {
       return <Navigate to="/login" />
    }
 

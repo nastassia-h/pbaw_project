@@ -3,8 +3,8 @@ import { Box, Button, TextField, useMediaQuery, useTheme, Link, Alert } from '@m
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { useDispatch } from 'react-redux'
-import { setUser, setToken, setRoles } from '../store/index.js'
-import axiosClient from '../axios-client.js'
+import { setUser, setToken, setRoles } from '../../store/index.js'
+import axiosClient from '../../axios-client.js'
 
 const loginSchema = yup.object().shape({
    email: yup.string().email("invalid email").required("required"),
@@ -16,7 +16,7 @@ const initialValuesLogin = {
    password: "",
 }
 
-const Login = () => {
+const AdminLogin = () => {
 
    const { palette } = useTheme()
    const dispatch = useDispatch()
@@ -25,11 +25,11 @@ const Login = () => {
 
    const login = (values, onSubmitProps) => {
       setErrors(null)
-      axiosClient.post('/login', values)
+      axiosClient.post('/adminlogin', values)
          .then(({ data }) => {
             dispatch(setUser({ user: data.user }))
             dispatch(setToken({ token: data.token }))
-            dispatch(setRoles({roles: data.roles}))
+            dispatch(setRoles({ roles: data.roles }))
          })
          .catch(err => {
             const response = err.response;
@@ -107,19 +107,6 @@ const Login = () => {
                      >
                         LOGIN
                      </Button>
-                     <Link
-                        href='/signup'
-                        sx={{
-                           textDecoration: "underline",
-                           color: palette.primary.main,
-                           "&:hover": {
-                              cursor: "pointer",
-                              color: palette.primary.light,
-                           },
-                        }}
-                     >
-                        Dont't have an account? Sing Up here
-                     </Link>
                   </Box>
                </form>
             )}
@@ -135,4 +122,4 @@ const Login = () => {
    )
 }
 
-export default Login
+export default AdminLogin

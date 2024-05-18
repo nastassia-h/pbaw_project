@@ -1,23 +1,39 @@
 import {
    ManageAccountsOutlined,
-   EditOutlined,
    LocationOnOutlined,
    WorkOutlineOutlined,
+   PersonAddOutlined, 
+   PersonRemoveOutlined
 } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme } from "@mui/material";
+import { Box, Typography, Divider, useTheme, IconButton } from "@mui/material";
 import UserImage from "../../components/UserImage";
 import FlexBetween from "../../components/FlexBetween";
 import WidgetWrapper from "../../components/WidgetWrapper";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import axiosClient from "../../axios-client";
+import { setFriends } from "../../store";
 
 const UserWidget = ({ userId, user }) => {
    const currentUser = useSelector(state => state.user)
+   const friends = useSelector((state) => state.user.friend_list);
+   const isFriend = friends?.includes(userId);
+
    const { palette } = useTheme();
    const navigate = useNavigate();
+   const dispatch = useDispatch();
    const dark = palette.primary.dark;
+   const primaryLight = palette.primary.light;
+   const primaryDark = palette.primary.dark;
    const medium = palette.primary.medium;
    const main = palette.primary.main;
+
+   const patchFriend = async () => {
+      axiosClient.patch(`/user/${currentUser.id}/${userId}`)
+         .then(({ data }) => {
+            dispatch(setFriends({ friends: data }))
+         })
+   };
 
    if (!user) {
       return null;
@@ -61,7 +77,7 @@ const UserWidget = ({ userId, user }) => {
                   <Typography color={medium}>{friend_list ? friend_list.length : 0} friends</Typography>
                </Box>
             </FlexBetween>
-            {user.id === currentUser.id &&
+            {user.id === currentUser.id ?
                <ManageAccountsOutlined color={dark}
                   onClick={() => navigate('/homepage/edit')}
                   sx={{
@@ -70,7 +86,16 @@ const UserWidget = ({ userId, user }) => {
                         cursor: "pointer",
                      },
                   }}
-               />
+               /> : <IconButton
+                        onClick={() => patchFriend()}
+                        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+                     >
+                        {isFriend ? (
+                           <PersonRemoveOutlined sx={{ color: primaryDark }} />
+                        ) : (
+                           <PersonAddOutlined sx={{ color: primaryDark }} />
+                        )}
+                     </IconButton>
             }
          </FlexBetween>
 

@@ -42,7 +42,7 @@ const UsersSearch = () => {
             </IconButton>
          </InputBase>
          {isOptionsShown &&
-            <Box position='absolute' top='99%' left={0} width='100%' zindex={10}
+            <Box position='absolute' top='99%' left={0} width='100%' zIndex={100}
                sx={{
                   backgroundColor: '#42a5f5',
                   maxHeight: '400px',
@@ -54,12 +54,12 @@ const UsersSearch = () => {
                {foundUsers?.map(foundUser =>
                   <>
                      <MenuItem key={foundUser.id}>
-                        <FlexBetween gap='0.5rem'>
-                           <UserImage size='8' image={foundUser.image_path} />
-                           <NavLink reloadDocument={true} to={`profile/${foundUser.id}`}>
-                              <Typography color='white' style={{ textDecoration: 'none' }} fontSize='12px'>{foundUser.first_name} {foundUser.last_name}</Typography>
-                           </NavLink>
-                        </FlexBetween>
+                        <NavLink reloadDocument={true} to={`profile/${foundUser.id}`}>
+                           <FlexBetween gap='0.5rem'>
+                              <UserImage size='8' image={foundUser.image_path} />
+                                 <Typography color='white' style={{ textDecoration: 'none' }} fontSize='12px'>{foundUser.first_name} {foundUser.last_name}</Typography>
+                           </FlexBetween>
+                        </NavLink>
                      </MenuItem>
                      <Divider style={{ padding: 0, margin: 0 }} />
                   </>

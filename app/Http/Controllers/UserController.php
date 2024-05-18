@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SignupRequest;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\SearchUserResource;
@@ -14,6 +15,30 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    public function store(SignupRequest $request)
+    {
+
+        $data = $request->validated();
+
+        if (isset($data['image_path'])) {
+            $relativePath = $this->saveImage($data['image_path']);
+            $data['image_path'] = $relativePath;
+        }
+
+        /** @var \App\Models\User $user */
+        $user = User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'occupation' => $data['occupation'],
+            'location' => $data['location'],
+            'friend_list' => [],
+            'image_path' => $data['image_path'] ?? null,
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
+
+        return new UserResource($user);
+    }
 
     public function index(Request $request)
     {
@@ -28,9 +53,15 @@ class UserController extends Controller
             ->orWhere([
                 ['first_name', 'like', "$user_last_name%"],
                 ['last_name', 'like', "$user_first_name%"],
-            ])
-            ->get(['id', 'first_name', 'last_name', 'image_path']);
-        return $users;
+            ]);
+
+        /** @var User $user */
+        $user = $request->user();
+        if ($user->hasRole('admin')) {
+            return $users->get();
+        } else {
+            return $users->get(['id', 'first_name', 'last_name', 'image_path']);
+        }
     }
 
     /**
@@ -102,9 +133,30 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(User $user, Request $request)
     {
-        //
+        $currentUser = $request->user();
+
+        if (!$currentUser->hasRole('admin') && $currentUser->id !== $user->id) {
+            return abort(403, 'Unauthorized action.');
+        }
+
+        $friendList = $user->friend_list;
+        foreach ($friendList as $friendId) {
+            $friend = new UserResource(User::findOrFail($friendId));
+            $friend_friend_list = $friend->friend_list;
+            unset($friend_friend_list[array_search($user->id, $friend_friend_list)]);
+            $friend->update(['friend_list' => $friend_friend_list]);
+        }
+        $user->delete();
+
+        // If there is an old image, delete it
+        if ($user->image_path) {
+            $absolutePath = public_path($user->image_path);
+            File::delete($absolutePath);
+        }
+
+        return response('', 204);
     }
 
     private function saveImage($image)

@@ -84,7 +84,7 @@ const PostWidget = ({
 
 
    return (
-      <WidgetWrapper mb="1rem">
+      <WidgetWrapper mb="0.5rem">
          <Dialog
             onClose={handleClose}
             open={open}>

@@ -19,13 +19,46 @@ class AuthController extends Controller
         if (!Auth::attempt($credentials)) {
             return response([
                 "message" => "Provided email or password is invalid"
-            ]);
+            ], 401);
         }
         /** @var \App\Models\User $user */
         $user = Auth::user();
+        if (!$user->hasRole('user')) {
+            return response([
+                "message" => "Provided email or password is invalid"
+            ], 401);
+        }
+
+        $roleNames = $user->roles->pluck('name');
+        unset($user->roles);
+
         $token = $user->createToken('main')->plainTextToken;
 
-        return response(["user" => $user, "token" => $token]);
+        return response(["user" => $user, "roles" => $roleNames, "token" => $token]);
+    }
+
+    public function adminlogin(LoginRequest $request)
+    {
+        $credentials = $request->validated();
+        if (!Auth::attempt($credentials)) {
+            return response([
+                "message" => "Provided email or password is invalid"
+            ], 401);
+        }
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if (!$user->hasRole('admin')) {
+            return response([
+                "message" => "Provided email or password is invalid"
+            ], 401);
+        }
+
+        $roleNames = $user->roles->pluck('name');
+        unset($user->roles);
+
+        $token = $user->createToken('main')->plainTextToken;
+
+        return response(["user" => $user, "roles" => $roleNames, "token" => $token]);
     }
 
     public function signup(SignupRequest $request)
@@ -44,14 +77,16 @@ class AuthController extends Controller
             'occupation' => $data['occupation'],
             'location' => $data['location'],
             'friend_list' => [],
-            'image_path' => $data['image_path'],
+            'image_path' => $data['image_path'] ?? null,
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
 
+        $user->setRole('user');
         $token = $user->createToken('main')->plainTextToken;
 
-        return response(["user" => $user, "token" => $token]);
+        unset($user->roles);
+        return response(["user" => $user, "roles" => $user->getRole(), "token" => $token]);
         // return response(compact('user', 'token'));
     }
 

@@ -39,7 +39,7 @@ const HomePage = () => {
                   display="grid"
                   gap="2rem"
                >
-                  <AdvertWidget />
+                  {/* <AdvertWidget /> */}
                   <FriendsListWidget friendList={user.friend_list} />
                </Box>
             </Box>

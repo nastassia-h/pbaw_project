@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import Dropzone from 'react-dropzone'
 import FlexBetween from '../components/FlexBetween'
 import axiosClient from '../axios-client.js'
-import { setToken, setUser } from '../store'
+import { setRoles, setToken, setUser } from '../store'
 
 const registerSchema = yup.object().shape({
    first_name: yup.string().required("required"),
@@ -63,6 +63,7 @@ const Signup = () => {
       axiosClient.post('/signup', formData)
          .then(({ data }) => {
             dispatch(setUser({ user: data.user }))
+            dispatch(setRoles({ roles: data.roles }))
             dispatch(setToken({ token: data.token }))
          })
          .catch(err => {

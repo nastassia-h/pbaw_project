@@ -45,4 +45,33 @@ class User extends Authenticatable
     protected $casts = [
         'friend_list' => 'array',
     ];
+
+    public function roles()
+    {
+        return $this
+            ->belongsToMany(Role::class)
+            ->withTimestamps();
+    }
+
+    public function setRole($roleName)
+    {
+        $role = Role::where('name', $roleName)->first();
+
+        if ($role) {
+            $this->roles()->sync([$role->id]);
+        }
+    }
+
+    public function getRole()
+    {
+        return $this->roles->pluck('name');;
+    }
+
+    public function hasRole(string $role)
+    {
+        return in_array(
+            $role,
+            $this->roles->pluck('name')->toArray()
+        );
+    }
 }
